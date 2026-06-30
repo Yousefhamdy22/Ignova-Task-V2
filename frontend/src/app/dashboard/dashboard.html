@@ -1,0 +1,53 @@
+<div class="dashboard">
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1 class="dashboard-title">IoT Dashboard</h1>
+      @if (isConnected$ | async) {
+        <span class="status-badge connected">&#9679; Connected</span>
+      } @else {
+        <span class="status-badge disconnected">&#9679; Disconnected</span>
+      }
+    </div>
+
+    @if (latest$ | async; as data) {
+      <div class="device-info">
+        <span class="info-item">
+          <span class="info-label">Tenant</span>
+          <span class="info-value">{{ data.tenantID }}</span>
+        </span>
+        <span class="info-item">
+          <span class="info-label">Device</span>
+          <span class="info-value">{{ data.deviceID }}</span>
+        </span>
+        <span class="info-item">
+          <span class="info-label">Last Update</span>
+          <span class="info-value">{{ data.timestamp | date:'HH:mm:ss' }}</span>
+        </span>
+      </div>
+    }
+  </header>
+
+  <main class="dashboard-body">
+    @if (latest$ | async; as data) {
+      <div class="widgets-row">
+        <div class="hmi-panel">
+          <app-hmi-widget [temperature]="data.temperature"></app-hmi-widget>
+          <div class="humidity-card">
+            <span class="hum-label">Humidity</span>
+            <span class="hum-value">{{ data.humidity | number:'1.1-1' }}%</span>
+          </div>
+        </div>
+
+        <div class="chart-panel">
+          <h2 class="panel-title">Real-time Telemetry (last 60 points)</h2>
+          <app-telemetry-chart></app-telemetry-chart>
+        </div>
+      </div>
+    } @else {
+      <div class="connecting-state">
+        <div class="spinner"></div>
+        <p>Connecting to <code>ws://localhost:8080</code>&hellip;</p>
+      </div>
+    }
+  </main>
+</div>
