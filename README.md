@@ -172,9 +172,9 @@ Next isolation step at scale: per-tenant InfluxDB buckets for hard storage-level
 
 # 2. ngrok  (DEV ONLY — exposes :3000 so EMQX Cloud can POST to the webhook)
 ngrok http 3000
-# Copy the https://xxxx.ngrok-free.app URL
+# Copy the https://9242-154-178-217-83.ngrok-free.app
 # Paste it into EMQX Cloud → Rule Engine → your rule → HTTP action URL:
-#   https://xxxx.ngrok-free.app/webhook/emqx-telemetry
+#  https://9242-154-178-217-83.ngrok-free.app/webhook/emqx-telemetry
 # Do this every time the ngrok tunnel restarts.
 
 # 3. Backend
@@ -209,28 +209,28 @@ PORT=3000
 WS_PORT=8080
 
 # MongoDB
-MONGO_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/iot_db?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://yousefhamdy1141_db_user:password12345@cluster0.oxewkvg.mongodb.net/iot_db?retryWrites=true&w=majority&appName=Cluster0
 
 # InfluxDB
 INFLUX_URL=http://localhost:8086
-INFLUX_TOKEN=<your-influx-token>
+INFLUX_TOKEN=my-secret-token-123
 INFLUX_ORG=my-org
 INFLUX_BUCKET=telemetry
 
-# Aiven Kafka (mTLS — no username/password, auth is via client certificates only)
-# Place cert files in Backend/certs/ — never commit them to git
-KAFKA_BROKERS=<your-kafka-host>:<port>
+# Suppress kafkajs v2 partitioner migration warning
+KAFKAJS_NO_PARTITIONER_WARNING=1
+
+# Aiven Kafka (mTLS — no username/password, auth is via client certificates)
+KAFKA_BROKERS=kafka-3f85027e-yousefhamdy1141-9eac.d.aivencloud.com:28602
 KAFKA_TOPIC=telemetry
 KAFKA_SSL_KEY_PATH=./certs/service.key
 KAFKA_SSL_CERT_PATH=./certs/service.cert
 KAFKA_SSL_CA_PATH=./certs/ca.pem
 
-# Suppress kafkajs v2 partitioner migration warning
-KAFKAJS_NO_PARTITIONER_WARNING=1
+# EMQX Webhook shared secret — EMQX sends this in every X-EMQX-Secret header
+# Change this to any random string; must match what you set in the EMQX action header
+EMQX_WEBHOOK_SECRET=IgnovaIoT-secret-2026
 
-# EMQX webhook shared secret
-# Set this same value in your EMQX Rule Engine HTTP action as header: X-EMQX-Secret
-EMQX_WEBHOOK_SECRET=<your-random-secret>
 ```
 
 Verify: `curl localhost:3000/health` — all four services should show connected/CLOSED:
